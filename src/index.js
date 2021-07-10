@@ -19,4 +19,9 @@ client.on("message", msg => {
     {
         msg.reply("pong");
     }
+
+    if(msg.content === "!andres")
+    {
+        msg.reply("el bufanda de la banda");
+    }
 });
