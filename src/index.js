@@ -26,4 +26,9 @@ client.on("message", msg => {
     {
         msg.channel.send("el andres es el bufanda de la banda");
     }
+
+    if(mensaje === "!carlos")
+    {
+        msg.channel.send("negro pucto");
+    }
 });
