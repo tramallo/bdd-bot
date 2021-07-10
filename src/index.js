@@ -15,12 +15,14 @@ client.on("message", msg => {
 
     //si el mensaje es "!ping", el bot respondera @usuario, pong
     //al parecer msg.reply etiqueta al usuario, pone una coma y el mensaje especificado
-    if(msg.content === "!ping")
+    var mensaje = msg.content
+
+    if(mensaje === "!ping")
     {
         msg.reply("pong");
     }
 
-    if(msg.content === "!andres")
+    if(mensaje === "!andres")
     {
         msg.reply("el bufanda de la banda");
     }
