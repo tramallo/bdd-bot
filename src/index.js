@@ -24,6 +24,6 @@ client.on("message", msg => {
 
     if(mensaje === "!andres")
     {
-        msg.reply("el bufanda de la banda");
+        msg.channel.send("es el bufanda de la banda");
     }
 });
