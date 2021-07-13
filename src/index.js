@@ -4,8 +4,8 @@ const client = new Client();
 
 const no = "❌", yes = "⭕", prefix = "!";
 
-//client.login("ODYzMjYxMDg1OTIxMTgxNzM2.YOkUiQ.mNcmHYeWvx4GR_KTwwzXt_6VtN8");
-client.login("ODYzNTkwNDI0MDM1MTk2OTQ4.YOpHQQ.GqS0OOge4Z5pTHxZiZCZLOLRq3E");
+client.login("ODYzMjYxMDg1OTIxMTgxNzM2.YOkUiQ.mNcmHYeWvx4GR_KTwwzXt_6VtN8");
+//client.login("ODYzNTkwNDI0MDM1MTk2OTQ4.YOpHQQ.GqS0OOge4Z5pTHxZiZCZLOLRq3E");
 
 
 client.once("ready", () => {
