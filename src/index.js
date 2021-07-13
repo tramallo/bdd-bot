@@ -1,34 +1,43 @@
-const { Client } = require ("discord.js");
+const { Client, Message } = require ("discord.js");
 const client = new Client();
 
-client.login("ODYzMjYxMDg1OTIxMTgxNzM2.YOkUiQ.mNcmHYeWvx4GR_KTwwzXt_6VtN8");
 
-//este evento se ejecuta cuando el bot ya esta funcionando al iniciar
-client.on("ready", () => {
+const no = "❌", yes = "⭕", prefix = "!";
 
-    //imprime este mensaje por consola
+//client.login("ODYzMjYxMDg1OTIxMTgxNzM2.YOkUiQ.mNcmHYeWvx4GR_KTwwzXt_6VtN8");
+client.login("ODYzNTkwNDI0MDM1MTk2OTQ4.YOpHQQ.GqS0OOge4Z5pTHxZiZCZLOLRq3E");
+
+
+client.once("ready", () => {
+
     console.log("bot ready");
 })
 
-//al llegar un mensaje a un canal de chat se ejecuta este evento
+let msgg = null;
 client.on("message", msg => {
+    if(!msg.content.startsWith(prefix) || msg.author.bot) return;
+    const args = msg.content.slice(prefix.length).trim().split(/ +/);
+    const command = args.shift().toLowerCase();
 
-    //si el mensaje es "!ping", el bot respondera @usuario, pong
-    //al parecer msg.reply etiqueta al usuario, pone una coma y el mensaje especificado
-    var mensaje = msg.content
-
-    if(mensaje === "!ping")
+    if(command === "mute")
     {
-        msg.reply("pong");
+        if(!msg.mentions.users.size)
+        {
+            return msg.reply("tienes que etiquetar al usuario");
+        }
+        const user = msg.mentions.users.first();
+
+        msg.channel.send("Se abre votacion para mutear al usuario: <@"+ user.id +">\nReacciona para votar\n⭕ Para aprobar\n❌ para denegar").then( sent => {
+            msgg = sent;
+            sent.react(no)
+            sent.react(yes)});
+
+        return;
+    }
+    if(command === "ping")
+    {
+        msg.channel.send("pong!");
+        return;
     }
 
-    if(mensaje === "!andres")
-    {
-        msg.channel.send("el andres es el bufanda de la banda");
-    }
-
-    if(mensaje === "!carlos")
-    {
-        msg.channel.send("negro pucto");
-    }
 });
