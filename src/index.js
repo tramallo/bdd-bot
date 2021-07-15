@@ -1,43 +1,101 @@
-const { Client, Message } = require ("discord.js");
-const client = new Client();
+const Discord = require('discord.js');
+const fs = require('fs');
+const config = require('./config.json')
 
+const client = new Discord.Client();
+client.commands = new Discord.Collection();
 
-const no = "❌", yes = "⭕", prefix = "!";
+//const dirPath = path.resolve('./commands')
+fs.readdir('./src/commands/', (err, files) => 
+{
+    if(err) { return console.error(err) }
 
-client.login("ODYzMjYxMDg1OTIxMTgxNzM2.YOkUiQ.mNcmHYeWvx4GR_KTwwzXt_6VtN8");
-//client.login("ODYzNTkwNDI0MDM1MTk2OTQ4.YOpHQQ.GqS0OOge4Z5pTHxZiZCZLOLRq3E");
+    files.forEach(file => 
+    {
+        if(!file.endsWith(".js")) return;
 
+        let command = require(`./commands/${file}`)
 
-client.once("ready", () => {
-
-    console.log("bot ready");
+        client.commands.set(command.name, command)
+    })
 })
 
-let msgg = null;
-client.on("message", msg => {
-    if(!msg.content.startsWith(prefix) || msg.author.bot) return;
-    const args = msg.content.slice(prefix.length).trim().split(/ +/);
-    const command = args.shift().toLowerCase();
+client.on("ready", () => 
+{
+    console.log(config.prefix)
+    console.log(`Bot logged at: ${Date.now()}`);
+})
 
-    if(command === "mute")
+client.on("message", msg =>
+{
+    if(msg.author.bot) return;
+    const args = msg.content.slice(config.prefix.length).trim().split(/ +/);
+    const commandName = args.shift().toLowerCase();
+    const command = client.commands.get(commandName)
+
+    if(!command) return
+
+    if(command.args && !args.length)
+    {
+        let reply = 'No has especificado ningun parametro'
+
+        if(command.usage)
+        {
+            reply += `\nEjemplo de uso: \'${command.usage}\'`
+        }
+
+        return msg.channel.send(reply)
+    }
+
+    if(msg.channel.type !== 'text')
+    {
+        msg.channel.send("no respondo por privado papu");
+    }
+
+    try
+    {
+        command.execute(client, config, msg, args)
+    }
+    catch (error)
+    {
+        console.error(error)
+        msg.reply("hubo un error al ejecutar el comando")
+    }
+
+});
+
+client.login(config.token);
+
+    /*if(command === "mute")
     {
         if(!msg.mentions.users.size)
         {
             return msg.reply("tienes que etiquetar al usuario");
         }
-        const user = msg.mentions.users.first();
-
-        msg.channel.send("Se abre votacion para mutear al usuario: <@"+ user.id +">\nReacciona para votar\n⭕ Para aprobar\n❌ para denegar").then( sent => {
-            msgg = sent;
-            sent.react(no)
-            sent.react(yes)});
-
+        const user = msg.mentions.members.first();
+        
+        if(msg.member.voice.channel || true)
+        {
+            if(msg.member.voice.channel.id === user.voice.channel.id)
+            {
+                if(msg.member.voice.channel.members !== 0)
+                {
+                    //nueva poll de muteo
+                    newPoll(command, null, msg.channel, user);
+                }
+                else {
+                    return msg.reply("Si solo estan los dos, puedes silenciarlo para ti")
+                }
+            }else {
+                return msg.reply("No te molesta si no estan en la misma sala -_-");
+            }
+        }else {
+            return msg.reply("No te molesta si no estas conectado");
+        }
         return;
     }
     if(command === "ping")
     {
         msg.channel.send("pong!");
         return;
-    }
-
-});
+    }*/
