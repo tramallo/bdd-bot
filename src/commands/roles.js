@@ -20,6 +20,7 @@ module.exports =
                 reply += `${role.name}\n`
             })
 
+            console.log("replying")
             message.channel.send(reply)
         }
     }
