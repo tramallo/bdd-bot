@@ -1,0 +1,14 @@
+- Be able to register a certain bot/user on a certain channel on a certain server as:
+	- muted: messages from this sender will be deleted instantly
+	- silenced: messages from this sender will be deleted after a while (configurable value at future)
+
+- be able to remove any configuration made in the bot (if i mute someone, i should be capable of unmuting back)
+
+
+- be able to register a certain role on a certain channel on a certain server as:
+	- muted: messages from a sender that haves this role will be deleted instantly
+	- silenced: messages from this sender will be deleted after a while (configurable value at future)
+
+- be able to remove any configuration made in the bot about roles (if i mute some role on some channel, i should be capable of unmuting it back)
+
+- be able to configure the "time to silence" in my server
