@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/Bot.ts",
   "scripts": {
-    "start": "ts-node src/Bot.ts",
+    "start:dev": "ts-node src/Bot.ts",
+    "start": "node dist/bot.js",
     "build": "tsc"
   },
   "repository": {
