@@ -2,9 +2,9 @@
   "name": "sarasbot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/Bot.ts",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "ts-node src/Bot.ts"
   },
   "repository": {
     "type": "git",
@@ -18,6 +18,11 @@
   },
   "homepage": "https://github.com/0Zyro/sarasbot#readme",
   "dependencies": {
-    "discord.js": "^12.5.3"
+    "discord.js": "^13.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.41",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.3"
   }
 }
