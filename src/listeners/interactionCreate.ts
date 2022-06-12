@@ -11,13 +11,8 @@ export default (client: Client): void => {
     client.on('interactionCreate', onInteractionCreate)
 }
 
-const handleSlashCommand = async (
-    client: Client,
-    interaction: BaseCommandInteraction,
-): Promise<void> => {
-    const slashCommand = commands.find(
-        (command) => command.name === interaction.commandName,
-    )
+const handleSlashCommand = async (client: Client, interaction: BaseCommandInteraction): Promise<void> => {
+    const slashCommand = commands.find((command) => command.name === interaction.commandName)
 
     if (!slashCommand) {
         interaction.followUp({ content: 'Command not found' })

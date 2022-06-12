@@ -1,8 +1,4 @@
-import {
-    ApplicationCommandOptionData,
-    BaseCommandInteraction,
-    Client,
-} from 'discord.js'
+import { ApplicationCommandOptionData, BaseCommandInteraction, Client } from 'discord.js'
 import { ApplicationCommandTypes } from 'discord.js/typings/enums'
 import { Command } from '../command.type'
 

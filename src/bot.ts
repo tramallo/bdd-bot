@@ -1,7 +1,12 @@
 import { Client, Intents, Message } from 'discord.js'
-import { BOT_TOKEN } from './secrets.json'
+import config from './utils/config'
 import ready from './listeners/ready'
 import interactionCreate from './listeners/interactionCreate'
+import dotenv from 'dotenv'
+
+if (process.env.NODE_ENV !== 'prod') {
+    dotenv.config()
+}
 
 console.log('Bot is starting...')
 
@@ -15,4 +20,4 @@ const client = new Client({
 ready(client)
 interactionCreate(client)
 
-client.login(BOT_TOKEN)
+client.login(config.botToken())
