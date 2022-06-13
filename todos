@@ -2,7 +2,7 @@
 
 // TODO: dig into TODO Tree plugin docs to figure out a configuration to use in it
 
-// TODO: investigate a proper way to deal with secret values, move secrets.json somewhere else
+// DONE: investigate a proper way to deal with secret values, move secrets.json somewhere else
 
 // TODO: investigate license types
 
