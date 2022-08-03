@@ -1,10 +1,10 @@
 {
   "name": "sarasbot",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "src/Bot.ts",
   "scripts": {
-    "start:dev": "ts-node src/Bot.ts",
+    "dev": "ts-node src/bot.ts",
     "start": "node dist/bot.js",
     "build": "tsc"
   },
