@@ -1,31 +1,33 @@
 {
-  "name": "sarasbot",
-  "version": "1.0.0",
-  "description": "",
-  "main": "src/Bot.ts",
-  "scripts": {
-    "start:dev": "ts-node src/Bot.ts",
-    "start": "node dist/bot.js",
-    "build": "tsc"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/0Zyro/sarasbot.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/0Zyro/sarasbot/issues"
-  },
-  "homepage": "https://github.com/0Zyro/sarasbot#readme",
-  "dependencies": {
-    "discord.js": "^13.8.0"
-  },
-  "devDependencies": {
-    "@types/node": "^17.0.41",
-    "dotenv": "^16.0.1",
-    "ts-node": "^10.8.1",
-    "typescript": "^4.7.3"
-  }
+    "name": "sarasbot",
+    "version": "0.0.1",
+    "description": "",
+    "main": "./bot.class.js",
+    "types": "./bot.class.d.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/0Zyro/sarasbot.git"
+    },
+    "keywords": [
+        "discordjs",
+        "bot",
+        "behaviour",
+        "development"
+    ],
+    "author": "Timothy Ramallo",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/0Zyro/sarasbot/issues"
+    },
+    "homepage": "https://github.com/0Zyro/sarasbot#readme",
+    "dependencies": {
+        "discord.js": "^13.8.0"
+    },
+    "devDependencies": {
+        "@types/node": "^17.0.41",
+        "typescript": "^4.7.3"
+    }
 }
