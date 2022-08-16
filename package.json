@@ -1,9 +1,10 @@
 {
     "name": "bdd-discord-bot",
-    "version": "0.0.1",
+    "version": "0.0.21",
+    "main": "./src/bot.class.js",
+    "types": "./src/bot.class.d.ts",
     "description": "This package exposes wrapper classes that allows developer to code a discord bot thinking about the desired 'behaviours' of the bot instead of dealing with events, listeners & commands that arent scoped on what we are coding",
-    "main": "./bot.class.js",
-    "types": "./bot.class.d.ts",
+    "author": "Timothy Ramallo",
     "scripts": {
         "build": "tsc"
     },
@@ -16,7 +17,6 @@
         "bot",
         "behaviour"
     ],
-    "author": "Timothy Ramallo",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/tramallo/bdd-discord-bot/issues"
