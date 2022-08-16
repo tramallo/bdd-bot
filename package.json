@@ -1,8 +1,8 @@
 {
     "name": "bdd-discord-bot",
-    "version": "0.0.22",
-    "main": "./src/bot.class.js",
-    "types": "./src/bot.class.d.ts",
+    "version": "0.0.23",
+    "main": "./dist/bot.class.js",
+    "types": "./dist/bot.class.d.ts",
     "description": "This package exposes wrapper classes that allows developer to code a discord bot thinking about the desired 'behaviours' of the bot instead of dealing with events, listeners & commands that arent scoped on what we are coding",
     "author": "Timothy Ramallo",
     "scripts": {
