@@ -1,6 +1,6 @@
 {
     "name": "bdd-discord-bot",
-    "version": "0.0.27",
+    "version": "0.0.28",
     "main": "lib/bot.class.js",
     "types": "lib/bot.class.d.ts",
     "description": "This package exposes wrapper classes that allows developer to code a discord bot thinking about the desired 'behaviours' of the bot instead of dealing with events, listeners & commands that arent scoped on what we are coding",
