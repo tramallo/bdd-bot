@@ -1,5 +1,0 @@
-node_modules
-.env.template
-prettier.config.js
-Procfile
-tsconfig.json

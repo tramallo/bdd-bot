@@ -1,18 +1,18 @@
 {
     "name": "bdd-discord-bot",
     "version": "0.0.25",
-    "main": "./dist/bot.class.js",
-    "types": "./dist/bot.class.d.ts",
+    "main": "lib/bot.class.js",
+    "types": "lib/bot.class.d.ts",
     "description": "This package exposes wrapper classes that allows developer to code a discord bot thinking about the desired 'behaviours' of the bot instead of dealing with events, listeners & commands that arent scoped on what we are coding",
     "license": "MIT",
     "author": "Timothy Ramallo",
     "homepage": "https://github.com/tramallo/bdd-discord-bot#readme",
     "files": [
-        "./dist"
+        "lib/**/*"
     ],
     "scripts": {
         "build": "tsc",
-        "prepublishOnly": "npm run build"
+        "test": "jest --config jestconfig.json"
     },
     "repository": {
         "type": "git",
@@ -27,7 +27,11 @@
         "url": "https://github.com/tramallo/bdd-discord-bot/issues"
     },
     "dependencies": {
-        "discord.js": "^13.8.0",
+        "discord.js": "^13.8.0"
+    },
+    "devDependencies": {
+        "@types/jest": "^28.1.7",
+        "prettier": "^2.7.1",
         "typescript": "^4.7.4"
     }
 }
