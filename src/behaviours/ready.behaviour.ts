@@ -4,7 +4,10 @@ import { Behaviour } from '../common/behaviour.class'
 
 export default async (bot: Bot): Promise<Behaviour> => {
     // TODO: refactor behaviours class to accept the initialization values at the constructor
-    const ready = new Behaviour('ready')
+    const ready = new Behaviour({
+        name: 'ready',
+        commands: [],
+    })
 
     ready.onceEvent('ready', async (client: Client<true>) => {
         console.info(`${client.user.username} is online.`)

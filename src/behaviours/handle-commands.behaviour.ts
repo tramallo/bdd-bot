@@ -4,7 +4,10 @@ import { Behaviour } from '../common/behaviour.class'
 import { Command } from '../common/types'
 
 export default async (bot: Bot): Promise<Behaviour> => {
-    const handleCommands = new Behaviour('handle-commands')
+    const handleCommands = new Behaviour({
+        name: 'handle-commands',
+        commands: [],
+    })
 
     handleCommands.onceEvent('ready', async (client: Client<true>) => {
         if (!client.user || !client.application) {
