@@ -2,6 +2,11 @@ import { ClientEvents } from 'discord.js'
 import { Bot } from './bot.class'
 import { Command, CommandFactory } from './types'
 
+export interface BehaviourData {
+    name: string
+    commands: Array<CommandFactory>
+}
+
 // TODO: onEvents & onceEvents typing is ugly
 export class Behaviour {
     public readonly name: string
@@ -9,12 +14,9 @@ export class Behaviour {
     public readonly onEvents: Map<string, unknown> = new Map()
     public readonly onceEvents: Map<string, unknown> = new Map()
 
-    constructor(name: string) {
-        this.name = name
-    }
-
-    public addCommand(command: (bot: Bot) => Promise<Command>) {
-        this.commands.push(command as CommandFactory)
+    constructor(values: BehaviourData) {
+        this.name = values.name
+        this.commands = values.commands
     }
 
     public onEvent<K extends keyof ClientEvents>(eventName: K, eventFunction: (...args: ClientEvents[K]) => Promise<void>) {

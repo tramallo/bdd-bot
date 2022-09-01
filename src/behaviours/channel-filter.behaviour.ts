@@ -2,7 +2,7 @@ import { ApplicationCommandOptionData, CommandInteraction, GuildBasedChannel, Me
 import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums'
 import { Behaviour } from '../common/behaviour.class'
 import { Bot } from '../common/bot.class'
-import { Command } from '../common/types'
+import { Command, CommandFactory } from '../common/types'
 
 // TODO: in-memory configuration ???
 const currentFilters = new Map<string, RegExp>()
@@ -11,7 +11,7 @@ const setFilterCommandOptions: Array<ApplicationCommandOptionData> = [
     { name: 'filter', description: 'filter to apply to the messages', required: true, type: ApplicationCommandOptionTypes.STRING },
     { name: 'channel', description: 'channel on which to apply the filter', required: true, type: ApplicationCommandOptionTypes.CHANNEL },
 ]
-const setFilter = (bot: Bot) =>
+const setFilter = () =>
     Promise.resolve({
         name: 'add-filter',
         options: setFilterCommandOptions,
@@ -31,12 +31,12 @@ const setFilter = (bot: Bot) =>
 
             await interaction.followUp(`filter '${regExp}' set up for channel '${channel.toString()}'`)
         },
-    })
+    } as Command)
 
 const clearChannelFilterOptions: Array<ApplicationCommandOptionData> = [
     { name: 'channel', description: 'channel to which remove filter', required: true, type: ApplicationCommandOptionTypes.CHANNEL },
 ]
-const clearChannelFilter = (bot: Bot) =>
+const clearChannelFilter = () =>
     Promise.resolve({
         name: 'clear-filter',
         options: clearChannelFilterOptions,
@@ -74,10 +74,10 @@ const messageIsAllowed = (message: Message): boolean => {
 }
 
 export default async (bot: Bot): Promise<Behaviour> => {
-    const channelFilter = new Behaviour('channel-filter')
-
-    channelFilter.addCommand(setFilter)
-    channelFilter.addCommand(clearChannelFilter)
+    const channelFilter = new Behaviour({
+        name: 'channel-filter',
+        commands: [setFilter as CommandFactory, clearChannelFilter as CommandFactory],
+    })
 
     channelFilter.onEvent('messageCreate', async (message: Message) => {
         if (messageIsAllowed(message)) {
