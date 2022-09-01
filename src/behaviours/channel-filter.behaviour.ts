@@ -76,7 +76,7 @@ const messageIsAllowed = (message: Message): boolean => {
 export default async (bot: Bot): Promise<Behaviour> => {
     const channelFilter = new Behaviour({
         name: 'channel-filter',
-        commands: [setFilter as CommandFactory, clearChannelFilter as CommandFactory],
+        commands: [setFilter, clearChannelFilter],
     })
 
     channelFilter.onEvent('messageCreate', async (message: Message) => {
