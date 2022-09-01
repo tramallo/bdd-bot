@@ -1,9 +1,10 @@
 import { Client } from 'discord.js'
-import { Bot } from '../bot.class'
-import { Behaviour } from '../behaviour.class'
-import { Command } from '../types'
+import { Bot } from '../common/bot.class'
+import { Behaviour } from '../common/behaviour.class'
+import { Command } from '../common/types'
 
 export default async (bot: Bot): Promise<Behaviour> => {
+    // TODO: refactor behaviours class to accept the initialization values at the constructor
     const ready = new Behaviour('ready')
 
     ready.onceEvent('ready', async (client: Client<true>) => {

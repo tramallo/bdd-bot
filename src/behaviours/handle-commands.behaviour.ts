@@ -1,6 +1,6 @@
 import { Interaction } from 'discord.js'
-import { Bot } from '../bot.class'
-import { Behaviour } from '../behaviour.class'
+import { Bot } from '../common/bot.class'
+import { Behaviour } from '../common/behaviour.class'
 
 export default async (bot: Bot): Promise<Behaviour> => {
     const handleCommands = new Behaviour('handle-commands')
