@@ -69,14 +69,14 @@ export class Bot extends Client<true> {
         }
     }
 
-    private registerBehaviourEvents(): void {
+    private async registerBehaviourEvents(): Promise<void> {
         for (const [behaviourName, behaviour] of this.behaviours) {
-            this.registerEvents(behaviour)
+            await this.registerEvents(behaviour)
         }
     }
 
     private async init(): Promise<void> {
-        this.registerBehaviourEvents()
+        await this.registerBehaviourEvents()
     }
 
     // TODO: this should return void or the result of client.login() ???
