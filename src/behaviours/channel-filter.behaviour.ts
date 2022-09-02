@@ -1,8 +1,8 @@
-import { ApplicationCommandOptionData, CommandInteraction, GuildBasedChannel, Message } from 'discord.js'
+import { ApplicationCommandOptionData, ClientEvents, CommandInteraction, GuildBasedChannel, Message } from 'discord.js'
 import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums'
 import { Behaviour } from '../common/behaviour.class'
 import { Bot } from '../common/bot.class'
-import { Command, CommandFactory } from '../common/types'
+import { BotEvent, BotEventTypes, Command, CommandFactory } from '../common/types'
 
 // TODO: in-memory configuration ???
 const currentFilters = new Map<string, RegExp>()
@@ -57,6 +57,19 @@ const clearChannelFilter = () =>
         },
     })
 
+// TODO: double definition on event name
+const messageCreate: BotEvent<'messageCreate'> = {
+    name: 'messageCreate',
+    type: BotEventTypes.ON,
+    onCall: async (message: Message) => {
+        if (messageIsAllowed(message)) {
+            return
+        }
+
+        await message.delete()
+    },
+}
+
 /**
  * this checks if the received message is allowed by checking if there's a filter on the channel where the message was sent in,
  * & if there's a configured filter, if the message is compliant with that filter
@@ -77,14 +90,7 @@ export default async (bot: Bot): Promise<Behaviour> => {
     const channelFilter = new Behaviour({
         name: 'channel-filter',
         commands: [setFilter, clearChannelFilter],
-    })
-
-    channelFilter.onEvent('messageCreate', async (message: Message) => {
-        if (messageIsAllowed(message)) {
-            return
-        }
-
-        await message.delete()
+        events: [messageCreate],
     })
 
     return channelFilter

@@ -1,4 +1,4 @@
-import { Client, ClientOptions, Collection } from 'discord.js'
+import { Client, ClientOptions, Collection, CommandInteraction, Interaction } from 'discord.js'
 import { Behaviour } from './behaviour.class'
 import { BehaviourFactory, Command } from './types'
 
@@ -24,33 +24,26 @@ export class Bot extends Client<true> {
     public async addBehaviour(behaviourFactory: BehaviourFactory): Promise<void> {
         const behaviour = await behaviourFactory(this)
 
-        if (!behaviour.commands.length && !behaviour.onEvents.size && !behaviour.onceEvents.size) {
-            console.warn(`Behaviour '${behaviour.name}' is empty`)
+        if (!behaviour.commands.length && !behaviour.events.length) {
+            console.warn(`behaviour '${behaviour.name}' is empty`)
             return
         }
 
         if (this.behaviours.has(behaviour.name)) {
-            console.warn(`Behaviour '${behaviour.name}' is already registered, skipping this one`)
+            console.warn(`behaviour '${behaviour.name}' is already registered, skipping this one`)
             return
         }
 
         this.behaviours.set(behaviour.name, behaviour)
     }
 
-    private async registerEvents(behaviour: Behaviour): Promise<void> {
-        console.info(`\nRegistering '${behaviour.name}' behaviour`)
+    private async setupBehaviour(behaviour: Behaviour): Promise<void> {
+        console.info(`\nregistering '${behaviour.name}' behaviour`)
 
-        if (behaviour.onceEvents.size) {
-            for (const [eventName, eventFunc] of behaviour.onceEvents) {
-                this.once(eventName, eventFunc as any)
-                console.info(`- once '${eventName}' event`)
-            }
-        }
-
-        if (behaviour.onEvents.size) {
-            for (const [eventName, eventFunc] of behaviour.onEvents) {
-                this.on(eventName, eventFunc as any)
-                console.info(`- on '${eventName}' event`)
+        if (behaviour.events.length) {
+            for (const event of behaviour.events) {
+                this[event.type](event.name, event.onCall)
+                console.info(`- ${event.type} '${event.name}' event`)
             }
         }
 
@@ -69,26 +62,69 @@ export class Bot extends Client<true> {
         }
     }
 
-    private async registerBehaviourEvents(): Promise<void> {
-        for (const [behaviourName, behaviour] of this.behaviours) {
-            await this.registerEvents(behaviour)
-        }
+    private async setupCommandHandler() {
+        // register commands when bot is ready
+        this.once('ready', async (client: Client) => {
+            if (!client.user || !client.application) {
+                throw new Error('user or application not found.')
+            }
+
+            console.info(`creating command list`)
+            const list: Array<Command> = []
+
+            for (const [commandName, command] of this.commands) {
+                list.push(command)
+                console.info(`- '${command.name}' added to list`)
+            }
+
+            // TODO: think an intuitive way to stablish to which gilds set the commands (meanwhile a configurable one should be enough)
+            this.application.commands.set(list, process.env.TEST_GUILD_ID as string)
+            console.info(`command list registered to guild '${process.env.TEST_GUILD_ID}'`)
+        })
+
+        // execute command function when command is called
+        this.on('interactionCreate', async (interaction: Interaction) => {
+            if (!interaction.isCommand()) {
+                return
+            }
+
+            const command = this.commands.get(interaction.commandName)
+
+            if (!command) {
+                throw new Error(`Command '${interaction.commandName}' not found`)
+            }
+
+            try {
+                // TODO: improve the logging on this file (ex: execution timestamp? options? guild? caller?)
+                console.info(`Executing '${interaction.commandName}' command`)
+                await command.onCall(interaction)
+            } catch (error) {
+                console.error(`Unhandled error when executing '${interaction.commandName}' command`)
+                throw error as Error
+            }
+        })
     }
 
     private async init(): Promise<void> {
-        await this.registerBehaviourEvents()
+        //setup command handler
+        await this.setupCommandHandler()
+
+        // setup behaviours
+        for (const [behaviourName, behaviour] of this.behaviours) {
+            await this.setupBehaviour(behaviour)
+        }
     }
 
     // TODO: this should return void or the result of client.login() ???
     public async start(botToken: string): Promise<void> {
         if (!botToken) {
-            throw new Error('A token must be specified to start the bot')
+            throw new Error('a token must be specified to start the bot')
         }
 
-        console.info(`Initial configuration`)
+        console.info(`initial configuration`)
         await this.init()
 
-        console.info(`Starting bot`)
+        console.info(`starting bot`)
         this.login(botToken)
     }
 }

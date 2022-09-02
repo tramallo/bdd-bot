@@ -18,6 +18,7 @@ export default async (bot: Bot): Promise<Behaviour> => {
     const ping = new Behaviour({
         name: 'ping',
         commands: [pingCommand],
+        events: [],
     })
 
     return ping
