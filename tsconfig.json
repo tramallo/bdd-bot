@@ -10,7 +10,7 @@
         "importHelpers": true,
         "esModuleInterop": true,
         "removeComments": true,
-        "declaration": true
+        "declaration": false
     },
     "include": ["src"],
     "exclude": ["**/*.spec.ts"]
