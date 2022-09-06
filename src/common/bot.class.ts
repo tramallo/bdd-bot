@@ -1,21 +1,17 @@
-import { Client, ClientOptions, Collection, Interaction } from 'discord.js'
+import { Client, ClientOptions, Collection, Intents, Interaction } from 'discord.js'
 import { Behaviour } from './behaviour.class'
 import { commandFunctions } from './behaviour.class'
 import { BehaviourAlreadyRegistered } from './errors/behaviourAlreadyRegistered.error'
 
-export class Bot extends Client<true> {
+// TODO: read 'intents' page & configure the bot to use the needed ones only
+export class Bot {
     private readonly behaviours: Collection<string, Behaviour> = new Collection()
-
-    constructor(options: ClientOptions) {
-        // TODO: read 'intents' page & configure the bot to use the needed ones only
-        super(options)
-    }
 
     /** Add the behaviour to the collection
      *
      * @param behaviour. behaviour to be added to the collection
      */
-    public async addBehaviour(behaviour: Behaviour): Promise<void> {
+    public addBehaviour(behaviour: Behaviour): void {
         if (!behaviour.commands.size && !behaviour.events.length) {
             console.warn(`behaviour '${behaviour.name}' is empty`)
             return
@@ -28,20 +24,20 @@ export class Bot extends Client<true> {
         this.behaviours.set(behaviour.name, behaviour)
     }
 
-    private async registerBehavioursEvents() {
+    private async registerBehavioursEvents(client: Client) {
         for (const [behaviourName, behaviour] of this.behaviours) {
             if (behaviour.events.length) {
                 for (const event of behaviour.events) {
-                    this[event.type](event.name, event.onCall)
+                    client[event.type](event.name, event.onCall)
                     console.info(`- '${behaviourName}' behaviour: ${event.type} '${event.name}' event registered`)
                 }
             }
         }
     }
 
-    private async setupCommandHandler() {
+    private async setupCommandHandler(client: Client) {
         // execute command function when command is called
-        this.on('interactionCreate', async (interaction: Interaction) => {
+        client.on('interactionCreate', async (interaction: Interaction) => {
             if (!interaction.isCommand()) {
                 return
             }
@@ -63,8 +59,8 @@ export class Bot extends Client<true> {
         })
     }
 
-    private async registerBehavioursCommands() {
-        this.once('ready', async (client: Client) => {
+    private async registerBehavioursCommands(client: Client) {
+        client.once('ready', async (client: Client) => {
             if (!client.user || !client.application) {
                 throw new Error('user or application not found.')
             }
@@ -74,7 +70,7 @@ export class Bot extends Client<true> {
             for (const [behaviourName, behaviour] of this.behaviours) {
                 for (const [commandName, command] of behaviour.commands) {
                     // TODO: awaiting one by one ???
-                    await this.application.commands.create(command)
+                    await client.application.commands.create(command)
                     console.log(`- '${behaviourName}' behaviour: ${commandName} command registered`)
                 }
             }
@@ -85,12 +81,17 @@ export class Bot extends Client<true> {
         })
     }
 
-    private async init(): Promise<void> {
-        await this.registerBehavioursCommands()
+    private async init(): Promise<Client> {
+        const allIntents = new Intents(32767)
+        const client = new Client({ intents: allIntents })
 
-        await this.setupCommandHandler()
+        await this.registerBehavioursCommands(client)
 
-        await this.registerBehavioursEvents()
+        await this.setupCommandHandler(client)
+
+        await this.registerBehavioursEvents(client)
+
+        return client
     }
 
     // TODO: this should return void or the result of client.login() ???
@@ -100,9 +101,9 @@ export class Bot extends Client<true> {
         }
 
         console.info(`initial configuration`)
-        await this.init()
+        const client = await this.init()
 
         console.info(`starting bot`)
-        this.login(botToken)
+        client.login(botToken)
     }
 }
