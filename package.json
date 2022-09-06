@@ -1,6 +1,6 @@
 {
     "name": "bdd-discord-bot",
-    "version": "0.0.31",
+    "version": "0.0.32",
     "main": "src/bot.ts",
     "description": "",
     "license": "MIT",

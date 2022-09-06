@@ -1,9 +1,8 @@
-import { Client, ClientOptions, Collection, Intents, Interaction } from 'discord.js'
+import { Client, Collection, Intents, Interaction } from 'discord.js'
 import { Behaviour } from './behaviour.class'
 import { commandFunctions } from './behaviour.class'
 import { BehaviourAlreadyRegistered } from './errors/behaviourAlreadyRegistered.error'
 
-// TODO: read 'intents' page & configure the bot to use the needed ones only
 export class Bot {
     private readonly behaviours: Collection<string, Behaviour> = new Collection()
 
@@ -82,6 +81,7 @@ export class Bot {
     }
 
     private async init(): Promise<Client> {
+        // TODO: read 'intents' page & configure the bot to use the needed ones only
         const allIntents = new Intents(32767)
         const client = new Client({ intents: allIntents })
 
