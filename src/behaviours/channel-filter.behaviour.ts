@@ -23,7 +23,6 @@ channelFilter.addCommand({
         // TODO: do not hardcode the option name
         const rawRegExp = interaction.options.get('filter', true).value as string
 
-        // TODO: is 'g' flag the right one?
         const regExp = new RegExp(rawRegExp.replace('\\', '\\\\'), '')
 
         const channel = interaction.options.get('channel', true).channel as GuildBasedChannel
