@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, CommandInteraction, GuildBasedChannel, Message } from 'discord.js'
+import { CommandInteraction, GuildBasedChannel, Intents, Message } from 'discord.js'
 import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums'
 import { Behaviour } from '../common/behaviour.class'
 import { BotEventTypes } from '../common/types'
@@ -8,15 +8,16 @@ const channelFilter = new Behaviour('channel-filter')
 // TODO: in-memory configuration ???
 const currentFilters = new Map<string, RegExp>()
 
-const setFilterCommandOptions: Array<ApplicationCommandOptionData> = [
-    { name: 'filter', description: 'filter to apply to the messages', required: true, type: ApplicationCommandOptionTypes.STRING },
-    { name: 'channel', description: 'channel on which to apply the filter', required: true, type: ApplicationCommandOptionTypes.CHANNEL },
-]
+channelFilter.addIntent('GUILDS')
+channelFilter.addIntent('GUILD_MESSAGES')
 
 channelFilter.addCommand({
     name: 'add-filter',
-    options: setFilterCommandOptions,
     description: 'sets up a filter on a channel',
+    options: [
+        { name: 'filter', description: 'filter to apply to the messages', required: true, type: ApplicationCommandOptionTypes.STRING },
+        { name: 'channel', description: 'channel on which to apply the filter', required: true, type: ApplicationCommandOptionTypes.CHANNEL },
+    ],
     onCall: async (interaction: CommandInteraction) => {
         await interaction.deferReply()
 
@@ -33,14 +34,10 @@ channelFilter.addCommand({
     },
 })
 
-const clearChannelFilterOptions: Array<ApplicationCommandOptionData> = [
-    { name: 'channel', description: 'channel to which remove filter', required: true, type: ApplicationCommandOptionTypes.CHANNEL },
-]
-
 channelFilter.addCommand({
     name: 'clear-filter',
-    options: clearChannelFilterOptions,
     description: 'removes a configured filter from a channel',
+    options: [{ name: 'channel', description: 'channel to which remove filter', required: true, type: ApplicationCommandOptionTypes.CHANNEL }],
     onCall: async (interaction: CommandInteraction) => {
         await interaction.deferReply()
 

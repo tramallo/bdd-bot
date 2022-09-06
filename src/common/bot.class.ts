@@ -1,7 +1,7 @@
-import { Client, Collection, Intents, Interaction } from 'discord.js'
+import { Client, Collection, Intents, IntentsString, Interaction } from 'discord.js'
 import { Behaviour } from './behaviour.class'
 import { commandFunctions } from './behaviour.class'
-import { BehaviourAlreadyRegistered } from './errors/behaviourAlreadyRegistered.error'
+import { BehaviourAlreadyRegistered } from './errors'
 
 export class Bot {
     private readonly behaviours: Collection<string, Behaviour> = new Collection()
@@ -80,10 +80,22 @@ export class Bot {
         })
     }
 
+    private calcIntents(): Intents {
+        const intents: Array<IntentsString> = []
+
+        for (const [behaviourName, behaviour] of this.behaviours) {
+            intents.push(...behaviour.intents)
+        }
+
+        const dedupedIntents = intents.filter((value, index) => {
+            return intents.indexOf(value) == index
+        })
+
+        return new Intents(dedupedIntents)
+    }
+
     private async init(): Promise<Client> {
-        // TODO: read 'intents' page & configure the bot to use the needed ones only
-        const allIntents = new Intents(32767)
-        const client = new Client({ intents: allIntents })
+        const client = new Client({ intents: this.calcIntents() })
 
         await this.registerBehavioursCommands(client)
 
