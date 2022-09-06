@@ -48,7 +48,7 @@ export class Bot {
             }
 
             try {
-                // TODO: improve the logging on this file (ex: execution timestamp? options? guild? caller?)
+                // TODO: improve the logging here (ex: execution timestamp? options? guild? caller?)
                 console.info(`executing '${interaction.commandName}' command`)
                 await commandFunction(interaction)
             } catch (error) {
