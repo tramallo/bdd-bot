@@ -1,4 +1,4 @@
-import { ChatInputApplicationCommandData, ClientEvents, CommandInteraction } from 'discord.js'
+import { ChatInputApplicationCommandData, Client, ClientEvents, CommandInteraction } from 'discord.js'
 
 // TODO: now it only works with ChatInput commands
 export interface Command extends ChatInputApplicationCommandData {

@@ -1,6 +1,6 @@
 import { BotEvent, Command, CommandFunction } from './types'
 import { CommandAlreadyRegistered } from './errors/commandAlreadyRegistered.error'
-import { ChatInputApplicationCommandData } from 'discord.js'
+import { ChatInputApplicationCommandData, ClientEvents } from 'discord.js'
 
 export const commandFunctions = new Map<string, CommandFunction>()
 
@@ -24,7 +24,7 @@ export class Behaviour {
         commandFunctions.set(command.name, command.onCall)
     }
 
-    public addEvent = (event: BotEvent<any>) => {
+    public addEvent = <K extends keyof ClientEvents>(event: BotEvent<K>) => {
         this.events.push(event)
     }
 }
