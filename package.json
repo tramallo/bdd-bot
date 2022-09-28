@@ -27,7 +27,9 @@
         "url": "https://github.com/tramallo/bdd-discord-bot/issues"
     },
     "dependencies": {
-        "discord.js": "^13.8.0"
+        "@typegoose/typegoose": "^9.11.2",
+        "discord.js": "^13.8.0",
+        "mongoose": "^6.5.4"
     },
     "devDependencies": {
         "dotenv": "^16.0.2",

@@ -1,12 +1,13 @@
-import { CommandInteraction, GuildBasedChannel, Intents, Message } from 'discord.js'
+import { getModelForClass, mongoose } from '@typegoose/typegoose'
+import { CommandInteraction, GuildBasedChannel, Message } from 'discord.js'
 import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums'
 import { Behaviour } from '../common/behaviour.class'
 import { BotEventTypes } from '../common/types'
+import { ChannelFilter } from '../utils/channel-filter.db-model'
 
 const channelFilter = new Behaviour('channel-filter')
 
-// TODO: in-memory configuration ???
-const currentFilters = new Map<string, RegExp>()
+const FilterStorage = getModelForClass(ChannelFilter)
 
 channelFilter.addIntent('GUILDS')
 channelFilter.addIntent('GUILD_MESSAGES')
@@ -21,16 +22,29 @@ channelFilter.addCommand({
     onCall: async (interaction: CommandInteraction) => {
         await interaction.deferReply()
 
+        await connectDB()
+
         // TODO: do not hardcode the option name
         const rawRegExp = interaction.options.get('filter', true).value as string
-
         const regExp = new RegExp(rawRegExp.replace('\\', '\\\\'), '')
 
         const channel = interaction.options.get('channel', true).channel as GuildBasedChannel
 
-        currentFilters.set(channel.id, regExp)
+        const filter = await FilterStorage.findOne({ channel_id: channel.id })
 
-        await interaction.followUp(`filter '${regExp}' set up for channel '${channel.toString()}'`)
+        if (!filter) {
+            await FilterStorage.create({ channel_id: channel.id, regexp: regExp })
+
+            await interaction.followUp(`filter '${regExp}' set up for channel '${channel.toString()}'`)
+
+            return
+        }
+
+        console.log(`found already existing filter for channel '${channel.toString()}', replacing filter`)
+
+        await FilterStorage.findByIdAndUpdate(filter.id, { regexp: regExp })
+
+        await interaction.followUp(`filter for channel '${channel.toString()}' updated to '${regExp}'`)
     },
 })
 
@@ -41,14 +55,11 @@ channelFilter.addCommand({
     onCall: async (interaction: CommandInteraction) => {
         await interaction.deferReply()
 
+        await connectDB()
+
         const channel = interaction.options.get('channel', true).channel as GuildBasedChannel
 
-        if (!currentFilters.has(channel.id)) {
-            await interaction.followUp(`channel '${channel.toString()}' didn't had any filter configured`)
-            return
-        }
-
-        currentFilters.delete(channel.id)
+        await FilterStorage.findOneAndDelete({ channel_id: channel.id })
 
         await interaction.followUp(`filter for channel '${channel.toString()}' cleared`)
     },
@@ -57,12 +68,13 @@ channelFilter.addCommand({
 channelFilter.addEvent({
     name: 'messageCreate',
     type: BotEventTypes.ON,
-    onCall: (message: Message) => {
-        if (messageIsAllowed(message)) {
+    onCall: async (message: Message) => {
+        // TODO: hardcoded APPLICATION_COMMAND is ugly
+        if ((await messageIsAllowed(message)) || message.type == 'APPLICATION_COMMAND') {
             return
         }
 
-        message.delete()
+        await message.delete()
     },
 })
 
@@ -70,16 +82,26 @@ channelFilter.addEvent({
  * this checks if the received message is allowed by checking if there's a filter on the channel where the message was sent in,
  * & if there's a configured filter, if the message is compliant with that filter
  */
-const messageIsAllowed = (message: Message): boolean => {
+const messageIsAllowed = async (message: Message): Promise<boolean> => {
     const channelId = message.channelId
 
-    if (!currentFilters.has(channelId)) {
+    await connectDB()
+
+    const filter = await FilterStorage.findOne({ channel_id: channelId })
+
+    if (!filter) {
         return true
     }
 
-    const regExp = currentFilters.get(channelId) as RegExp
+    const regExp = new RegExp(filter.regexp, '')
 
     return regExp.test(message.content)
+}
+
+const connectDB = async (): Promise<void> => {
+    if (mongoose.connection.readyState != mongoose.ConnectionStates.connected) {
+        await mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string)
+    }
 }
 
 export default channelFilter
